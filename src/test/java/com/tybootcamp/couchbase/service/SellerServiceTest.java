@@ -1,18 +1,18 @@
 package com.tybootcamp.couchbase.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class SellerServiceTest {
@@ -22,6 +22,10 @@ class SellerServiceTest {
   @Autowired
   private SellerRepository sellerRepository;
 
+  @AfterEach
+  public void clearSellers() {
+    sellerRepository.deleteAll();
+  }
 
   /**
    * Fetches a document by it's id. Therefore it does not need any additional secondary index.
@@ -49,7 +53,6 @@ class SellerServiceTest {
   @Order(2)
   public void findByName() {
     //Given
-    sellerRepository.deleteByName("myShop"); //to be make sure of uniqueness
     Seller myShop = sellerService.create("myShop");
 
     //When
@@ -69,7 +72,6 @@ class SellerServiceTest {
   @Order(3)
   public void ensureSellerNameUniqueness() {
     //Given
-    sellerRepository.deleteByName("myShop"); //clean up first
     sellerService.create("myShop"); //first time
 
     //When
@@ -90,7 +92,6 @@ class SellerServiceTest {
   @Order(4)
   public void addProducts() {
     //Given
-    sellerRepository.deleteByName("myShop"); //clean up first
     sellerService.create("myShop");
     List<Product> products = List.of(
         new Product("glasses", 10.5),
@@ -121,9 +122,14 @@ class SellerServiceTest {
   @Order(6)
   public void getProductsByCategory() {
     //Given
-    sellerRepository.deleteByName("myShop"); //clean up first
     Seller myShop = sellerService.create("myShop");
 
+    sellerService.addCategoryToSeller("myShop", "category1");
+    sellerService.addCategoryToSeller("myShop", "category2");
+    sellerService.addProductsToSellerCategory("myShop", "category1",
+            List.of(new Product("glasses", 10.05), new Product("shirt", 5.0)));
+    sellerService.addProductsToSellerCategory("myShop", "category2",
+            List.of(new Product("monitor", 53.21), new Product("keyboard", 32.05)));
     // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
     // You need to find a way to query them with their categories.
     // Think about the performance on scale

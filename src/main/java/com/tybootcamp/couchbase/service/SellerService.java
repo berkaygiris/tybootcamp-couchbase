@@ -1,10 +1,13 @@
 package com.tybootcamp.couchbase.service;
 
+import com.tybootcamp.couchbase.domain.Category;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
-import java.util.List;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class SellerService {
@@ -16,6 +19,9 @@ public class SellerService {
   }
 
   public Seller create(String name) {
+    if(sellerRepository.existsByName(name)) {
+      throw new RuntimeException("There is already a shop named as: myshop");
+    }
     Seller seller = new Seller(name);
     return sellerRepository.save(seller);
   }
@@ -27,17 +33,40 @@ public class SellerService {
   }
 
   public Seller findByName(String name) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    return sellerRepository.findByName(name).orElseThrow(() -> new RuntimeException("runtime"));
+  }
+
+  public void addCategoryToSeller(String sellerName, String categoryName) {
+    Seller seller = sellerRepository.findByName(sellerName).orElseThrow(RuntimeException::new);
+    seller.addCategory(categoryName);
+    sellerRepository.save(seller);
+  }
+
+  public void addProductsToSellerCategory(String sellerName, String categoryName, List<Product> products) {
+    Seller seller = sellerRepository.findByName(sellerName).orElseThrow(RuntimeException::new);
+
+    Map<String, Category> categories = seller.getCategories();
+    if(!categories.containsKey(categoryName)) {
+      throw new RuntimeException();
+    }
+    Category category = categories.get(categoryName);
+    category.addProducts(products);
+    sellerRepository.save(seller);
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Seller seller = sellerRepository.findByName(sellerName).orElseThrow(RuntimeException::new);
+    seller.setProducts(products);
+    sellerRepository.save(seller);
   }
 
-  public List<Product> getProductsByCategory(String sellerName, String category) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+  public List<Product> getProductsByCategory(String sellerName, String categoryName) {
+    Seller seller = sellerRepository.findByName(sellerName).orElseThrow(RuntimeException::new);
+    Map<String, Category> categories = seller.getCategories();
+    if(!categories.containsKey(categoryName)) {
+      throw new RuntimeException("category not found");
+    }
+    Category category = categories.get(categoryName);
+    return category.getProducts();
   }
 }
