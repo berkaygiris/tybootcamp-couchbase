@@ -13,12 +13,12 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
   @Override
   public String getUserName() {
-    return "myapp";
+    return "test";
   }
 
   @Override
   public String getPassword() {
-    return "123321";
+    return "test123";
   }
 
   @Override

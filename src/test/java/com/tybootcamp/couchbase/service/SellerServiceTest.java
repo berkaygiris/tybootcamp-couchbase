@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,11 @@ class SellerServiceTest {
     //Given
     sellerRepository.deleteByName("myShop"); //to be make sure of uniqueness
     Seller myShop = sellerService.create("myShop");
-
+    try {
+      Thread.sleep(123);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     //When
     Seller foundSeller = sellerService.findByName("myShop");
 
@@ -71,6 +76,12 @@ class SellerServiceTest {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
     sellerService.create("myShop"); //first time
+
+    try {
+      Thread.sleep(123);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     //When
     RuntimeException exception = assertThrows(RuntimeException.class, () ->
@@ -96,6 +107,12 @@ class SellerServiceTest {
         new Product("glasses", 10.5),
         new Product("shirt", 5.0)
     );
+
+    try {
+      Thread.sleep(123);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     //When
     sellerService.addProductsToSeller("myShop", products);
@@ -127,6 +144,59 @@ class SellerServiceTest {
     // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
     // You need to find a way to query them with their categories.
     // Think about the performance on scale
+
+    List<Product> products = List.of(
+            new Product("glasses", 10.5,"category1"),
+            new Product("shirt", 5.0,"category1"),
+            new Product("monitor", 25.0,"category2"),
+            new Product("keyboard", 15.0,"category2")
+    );
+
+
+/*
+    myShop.setProducts(products);
+    sellerRepository.save(myShop);
+
+    try {
+      Thread.sleep(123);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }*/
+
+
+    myShop.setProducts(products);
+
+    Map<String,List<Product>> sellerCategoryHashMap = myShop.getCategoryHashMap();
+
+    for(Product p : products){
+
+      if (sellerCategoryHashMap.containsKey(p.getCategory())){
+        List<Product> pList = sellerCategoryHashMap.get(p.getCategory());
+        pList.add(p);
+        sellerCategoryHashMap.put(p.getCategory(),pList);
+      }
+      else{
+        List<Product> pList = new ArrayList<>();
+        pList.add(p);
+        sellerCategoryHashMap.put(p.getCategory(),pList);
+      }
+    }
+
+    myShop.setCategoryHashMap(sellerCategoryHashMap);
+    sellerRepository.save(myShop);
+
+
+    try {
+      Thread.sleep(123);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+
+
+
+
+
 
     //When
     List<Product> productsByCategory1 = sellerService.getProductsByCategory("myShop", "category1");

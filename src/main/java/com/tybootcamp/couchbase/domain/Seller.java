@@ -1,6 +1,7 @@
 package com.tybootcamp.couchbase.domain;
 
-import java.util.List;
+import java.util.*;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 import org.springframework.data.couchbase.core.mapping.Field;
@@ -18,7 +19,10 @@ public class Seller {
   private String name;
 
   @Field
-  private List<Product> products;
+  private List<Product> products = new ArrayList<>();
+
+  @Field
+  private Map<String,List<Product>> categoryHashMap = new HashMap<>();
 
   public Seller(String name) {
     this.name = name;
@@ -46,5 +50,13 @@ public class Seller {
 
   public void setProducts(List<Product> products) {
     this.products = products;
+  }
+
+  public Map<String, List<Product>> getCategoryHashMap() {
+    return categoryHashMap;
+  }
+
+  public void setCategoryHashMap(Map<String, List<Product>> categoryHashMap) {
+    this.categoryHashMap = categoryHashMap;
   }
 }

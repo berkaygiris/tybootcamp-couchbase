@@ -3,7 +3,9 @@ package com.tybootcamp.couchbase.service;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
-import java.util.List;
+
+import java.util.*;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,8 +18,15 @@ public class SellerService {
   }
 
   public Seller create(String name) {
-    Seller seller = new Seller(name);
-    return sellerRepository.save(seller);
+    Seller s = sellerRepository.findByName(name).get();
+    if (s == null){
+      Seller seller = new Seller(name);
+      return sellerRepository.save(seller);
+    }
+    else{
+        throw new RuntimeException(
+                String.format("There is already a shop named as: %s", name.toLowerCase()));
+    }
   }
 
   public Seller findById(String id) {
@@ -27,17 +36,39 @@ public class SellerService {
   }
 
   public Seller findByName(String name) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    return sellerRepository.findByName(name).orElseThrow(()-> new RuntimeException(
+            String.format("Seller not found with name: %s",name)
+    ));
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Seller s = findByName(sellerName);
+    s.setProducts(products);
+    sellerRepository.save(s);
   }
 
   public List<Product> getProductsByCategory(String sellerName, String category) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+
+/*
+
+    Seller s = findByName(sellerName);
+
+    List<Product> productList = new ArrayList<>();
+    List<Product> sellerProductList = s.getProducts();
+    for (Product p : sellerProductList)
+    {
+      if (p.getCategory().equals(category)){
+        productList.add(p);
+      }
+    }
+
+    return productList;*/
+
+
+    Seller seller = findByName(sellerName);
+
+    return seller.getCategoryHashMap().get(category);
+
+
   }
 }
