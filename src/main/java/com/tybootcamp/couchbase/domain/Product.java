@@ -12,10 +12,22 @@ public class Product {
   @Field
   private Double price;
 
+  @Field
+  private String category = "uncategorized";
+
+  public Product(){}
+
   public Product(String name, Double price) {
     this.name = name;
     this.price = price;
   }
+
+  public Product(String name, Double price, String category) {
+    this.name = name;
+    this.price = price;
+    this.category = category;
+  }
+
 
   public String getName() {
     return name;
@@ -32,4 +44,14 @@ public class Product {
   public void setPrice(Double price) {
     this.price = price;
   }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
+  }
+
+
 }
