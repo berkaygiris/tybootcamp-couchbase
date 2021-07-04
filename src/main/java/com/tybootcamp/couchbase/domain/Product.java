@@ -13,7 +13,7 @@ public class Product {
   private Double price;
 
   @Field
-  private String category;
+  private String category = "uncategorized";
 
   public Product(){}
 

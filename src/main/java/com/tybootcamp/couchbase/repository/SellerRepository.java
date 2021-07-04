@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface SellerRepository extends CouchbaseRepository<Seller, String> {
 
   void deleteByName(String name);
-  Optional<Seller> findByName(String name);
+  Seller findByName(String name);
 
 }

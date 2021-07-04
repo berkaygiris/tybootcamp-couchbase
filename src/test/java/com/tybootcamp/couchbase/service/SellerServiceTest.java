@@ -152,40 +152,6 @@ class SellerServiceTest {
             new Product("keyboard", 15.0,"category2")
     );
 
-
-/*
-    myShop.setProducts(products);
-    sellerRepository.save(myShop);
-
-    try {
-      Thread.sleep(123);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }*/
-
-
-    myShop.setProducts(products);
-
-    Map<String,List<Product>> sellerCategoryHashMap = myShop.getCategoryHashMap();
-
-    for(Product p : products){
-
-      if (sellerCategoryHashMap.containsKey(p.getCategory())){
-        List<Product> pList = sellerCategoryHashMap.get(p.getCategory());
-        pList.add(p);
-        sellerCategoryHashMap.put(p.getCategory(),pList);
-      }
-      else{
-        List<Product> pList = new ArrayList<>();
-        pList.add(p);
-        sellerCategoryHashMap.put(p.getCategory(),pList);
-      }
-    }
-
-    myShop.setCategoryHashMap(sellerCategoryHashMap);
-    sellerRepository.save(myShop);
-
-
     try {
       Thread.sleep(123);
     } catch (InterruptedException e) {
@@ -193,10 +159,14 @@ class SellerServiceTest {
     }
 
 
+    sellerService.addProductsToSeller("myShop",products);
 
 
-
-
+    try {
+      Thread.sleep(123);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     //When
     List<Product> productsByCategory1 = sellerService.getProductsByCategory("myShop", "category1");

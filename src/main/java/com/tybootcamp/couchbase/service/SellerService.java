@@ -18,7 +18,7 @@ public class SellerService {
   }
 
   public Seller create(String name) {
-    Seller s = sellerRepository.findByName(name).get();
+    Seller s = sellerRepository.findByName(name);
     if (s == null){
       Seller seller = new Seller(name);
       return sellerRepository.save(seller);
@@ -36,34 +36,47 @@ public class SellerService {
   }
 
   public Seller findByName(String name) {
-    return sellerRepository.findByName(name).orElseThrow(()-> new RuntimeException(
-            String.format("Seller not found with name: %s",name)
-    ));
+
+    Seller seller = sellerRepository.findByName(name);
+    if (seller == null){
+      throw new RuntimeException(String.format("Seller not found with name: %s",name));
+    }
+    return seller;
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
-    Seller s = findByName(sellerName);
-    s.setProducts(products);
-    sellerRepository.save(s);
-  }
 
-  public List<Product> getProductsByCategory(String sellerName, String category) {
+    Seller seller = findByName(sellerName);
 
-/*
+    List<Product> sellerProductList = seller.getProducts();
+    for (Product p : products){
+      if (!sellerProductList.contains(p)){
+        sellerProductList.add(p);
+      }
+    }
+    seller.setProducts(sellerProductList);
 
-    Seller s = findByName(sellerName);
 
-    List<Product> productList = new ArrayList<>();
-    List<Product> sellerProductList = s.getProducts();
-    for (Product p : sellerProductList)
-    {
-      if (p.getCategory().equals(category)){
-        productList.add(p);
+    Map<String,List<Product>> sellerCategoryHashMap = seller.getCategoryHashMap();
+    for(Product p : products){
+      if (sellerCategoryHashMap.containsKey(p.getCategory())){
+        List<Product> pList = sellerCategoryHashMap.get(p.getCategory());
+        pList.add(p);
+        sellerCategoryHashMap.put(p.getCategory(),pList);
+      }
+      else{
+        List<Product> pList = new ArrayList<>();
+        pList.add(p);
+        sellerCategoryHashMap.put(p.getCategory(),pList);
       }
     }
 
-    return productList;*/
+    seller.setCategoryHashMap(sellerCategoryHashMap);
 
+    sellerRepository.save(seller);
+  }
+
+  public List<Product> getProductsByCategory(String sellerName, String category) {
 
     Seller seller = findByName(sellerName);
 
