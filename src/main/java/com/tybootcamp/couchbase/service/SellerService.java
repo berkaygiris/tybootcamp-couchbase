@@ -18,9 +18,9 @@ public class SellerService {
   }
 
   public Seller create(String name) {
-    Seller s = sellerRepository.findByName(name);
-    if (s == null){
-      Seller seller = new Seller(name);
+    Seller seller = sellerRepository.findByName(name);
+    if (seller == null){
+      seller = new Seller(name);
       return sellerRepository.save(seller);
     }
     else{
@@ -49,26 +49,26 @@ public class SellerService {
     Seller seller = findByName(sellerName);
 
     List<Product> sellerProductList = seller.getProducts();
-    for (Product p : products){
-      if (!sellerProductList.contains(p)){
-        sellerProductList.add(p);
+
+    for (Product product : products){
+      if (!sellerProductList.contains(product)){
+        sellerProductList.add(product);
       }
     }
     seller.setProducts(sellerProductList);
 
 
     Map<String,List<Product>> sellerCategoryHashMap = seller.getCategoryHashMap();
-    for(Product p : products){
-      if (sellerCategoryHashMap.containsKey(p.getCategory())){
-        List<Product> pList = sellerCategoryHashMap.get(p.getCategory());
-        pList.add(p);
-        sellerCategoryHashMap.put(p.getCategory(),pList);
+    for(Product product : products){
+      List<Product> pList;
+      if (sellerCategoryHashMap.containsKey(product.getCategory())){
+        pList = sellerCategoryHashMap.get(product.getCategory());
       }
       else{
-        List<Product> pList = new ArrayList<>();
-        pList.add(p);
-        sellerCategoryHashMap.put(p.getCategory(),pList);
+        pList = new ArrayList<>();
       }
+      pList.add(product);
+      sellerCategoryHashMap.put(product.getCategory(),pList);
     }
 
     seller.setCategoryHashMap(sellerCategoryHashMap);
