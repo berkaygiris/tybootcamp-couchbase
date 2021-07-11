@@ -1,11 +1,13 @@
 package com.tybootcamp.couchbase.domain;
 
-import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 import org.springframework.data.couchbase.core.mapping.Field;
 import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Document
 public class Seller {
@@ -20,8 +22,14 @@ public class Seller {
   @Field
   private List<Product> products;
 
-  public Seller(String name) {
+  public Seller(String id, String name, List<Product> products) {
+    this.id = id;
     this.name = name;
+    this.products = products;
+  }
+
+  public static Seller fromName(String name) {
+    return new Seller(null, name, new ArrayList<>());
   }
 
   public String getId() {
