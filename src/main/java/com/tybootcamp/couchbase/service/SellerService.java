@@ -3,8 +3,10 @@ package com.tybootcamp.couchbase.service;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
-import java.util.List;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SellerService {
@@ -16,7 +18,11 @@ public class SellerService {
   }
 
   public Seller create(String name) {
-    Seller seller = new Seller(name);
+    boolean sellerExists = sellerRepository.existsByName(name);
+    if (sellerExists)
+      throw new RuntimeException(String.format("There is already a shop named as: %s", name));
+
+    Seller seller = Seller.fromName(name);
     return sellerRepository.save(seller);
   }
 
@@ -27,17 +33,21 @@ public class SellerService {
   }
 
   public Seller findByName(String name) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    return sellerRepository.findByName(name).orElseThrow(() -> new RuntimeException(
+        String.format("Seller not found with name: %s", name)
+    ));
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Seller seller = this.findByName(sellerName);
+    seller.getProducts().addAll(products);
+    sellerRepository.save(seller);
   }
 
   public List<Product> getProductsByCategory(String sellerName, String category) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    return this.findByName(sellerName).getProducts()
+        .stream()
+        .filter(product -> product.getCategories().contains(category))
+        .collect(Collectors.toList());
   }
 }
