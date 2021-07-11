@@ -1,5 +1,6 @@
 package com.tybootcamp.couchbase.service;
 
+import com.tybootcamp.couchbase.domain.Category;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
@@ -7,6 +8,7 @@ import com.tybootcamp.couchbase.repository.SellerRepository;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -48,7 +50,14 @@ public class SellerService {
     }
 
     public List<Product> getProductsByCategory(String sellerName, String category) {
-        //TODO: Not yet implemented
-        throw new RuntimeException("Implement me");
+        Seller seller = this.findByName(sellerName);
+        Category filteredCategory = seller.getCategories().stream().filter(x -> x.getName().equals(category)).findFirst().orElseThrow(() -> new RuntimeException(String.format("%s Doest Not Exist!", category)));
+       return filteredCategory.getProducts();
+    }
+
+    public void addProductsToSellerCategory(Seller seller, String category, List<Product> products) {
+        Category filteredCategory = seller.getCategories().stream().filter(x -> x.getName().equals(category)).findFirst().orElseThrow(() -> new RuntimeException(String.format("%s Doest Not Exist!", category)));
+        filteredCategory.addProducts(products);
+        sellerRepository.save(seller);
     }
 }
