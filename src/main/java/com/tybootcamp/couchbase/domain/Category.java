@@ -17,9 +17,7 @@ public class Category {
     public Category(String name) {
         this.setName(name);
     }
-
-
-
+    
     public void setProducts(List<Product> products) {
         this.products = products;
     }
