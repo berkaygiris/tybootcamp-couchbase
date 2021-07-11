@@ -1,18 +1,20 @@
 package com.tybootcamp.couchbase.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class SellerServiceTest {
@@ -78,7 +80,7 @@ class SellerServiceTest {
     );
 
     //Then
-    assertEquals("There is already a shop named as: myshop", exception.getMessage());
+    assertEquals("There is already a shop named as: myShop", exception.getMessage());
   }
 
   /**
@@ -124,9 +126,12 @@ class SellerServiceTest {
     sellerRepository.deleteByName("myShop"); //clean up first
     Seller myShop = sellerService.create("myShop");
 
-    // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
-    // You need to find a way to query them with their categories.
-    // Think about the performance on scale
+    Product glasses = new Product("glasses", 1.1).withCategories(Collections.singleton("category1"));
+    Product shirt = new Product("shirt", 2.3).withCategories(Collections.singleton("category1"));
+    Product monitor = new Product("monitor", 4.5).withCategories(Collections.singleton("category2"));
+    Product keyboard = new Product("keyboard", 6.7).withCategories(Collections.singleton("category2"));
+
+    sellerService.addProductsToSeller(myShop.getName(), List.of(glasses, shirt, monitor, keyboard));
 
     //When
     List<Product> productsByCategory1 = sellerService.getProductsByCategory("myShop", "category1");
