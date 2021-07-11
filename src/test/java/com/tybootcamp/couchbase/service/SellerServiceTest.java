@@ -28,10 +28,10 @@ class SellerServiceTest {
    */
   @Test
   @Order(1)
-  public void findById() {
+  public void findById() throws InterruptedException {
     //Given
     Seller createdSeller = sellerService.create("myShop");
-
+    Thread.sleep(100);
     //When
     Seller foundSeller = sellerService.findById(createdSeller.getId());
 
@@ -47,10 +47,12 @@ class SellerServiceTest {
    */
   @Test
   @Order(2)
-  public void findByName() {
+  public void findByName() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //to be make sure of uniqueness
+    Thread.sleep(50);
     Seller myShop = sellerService.create("myShop");
+    Thread.sleep(100);
 
     //When
     Seller foundSeller = sellerService.findByName("myShop");
@@ -67,18 +69,20 @@ class SellerServiceTest {
    */
   @Test
   @Order(3)
-  public void ensureSellerNameUniqueness() {
+  public void ensureSellerNameUniqueness() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(100);
     sellerService.create("myShop"); //first time
+    Thread.sleep(100);
 
     //When
     RuntimeException exception = assertThrows(RuntimeException.class, () ->
         sellerService.create("myShop") //second time
     );
-
+    Thread.sleep(100);
     //Then
-    assertEquals("There is already a shop named as: myshop", exception.getMessage());
+    assertEquals("There is already a shop named as: myShop", exception.getMessage());
   }
 
   /**
@@ -88,10 +92,12 @@ class SellerServiceTest {
    */
   @Test
   @Order(4)
-  public void addProducts() {
+  public void addProducts() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(100);
     sellerService.create("myShop");
+    Thread.sleep(100);
     List<Product> products = List.of(
         new Product("glasses", 10.5),
         new Product("shirt", 5.0)
@@ -99,9 +105,12 @@ class SellerServiceTest {
 
     //When
     sellerService.addProductsToSeller("myShop", products);
+    Thread.sleep(100);
 
     //Then
     Seller myShop = sellerService.findByName("myShop");
+    Thread.sleep(100);
+
     assertEquals(2, myShop.getProducts().size());
     assertTrue(myShop.getProducts().stream()
         .map(Product::getName)
