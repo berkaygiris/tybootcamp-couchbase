@@ -28,8 +28,11 @@ class SellerServiceTest {
    */
   @Test
   @Order(1)
-  public void findById() {
+  public void findById() throws InterruptedException{
     //Given
+    sellerRepository.deleteByName("myShop"); //to be make sure of uniqueness
+    Thread.sleep(50);
+
     Seller createdSeller = sellerService.create("myShop");
 
     //When
@@ -47,11 +50,14 @@ class SellerServiceTest {
    */
   @Test
   @Order(2)
-  public void findByName() {
+  public void findByName() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //to be make sure of uniqueness
+    Thread.sleep(100);
+
     Seller myShop = sellerService.create("myShop");
 
+    Thread.sleep(50);
     //When
     Seller foundSeller = sellerService.findByName("myShop");
 
@@ -67,11 +73,12 @@ class SellerServiceTest {
    */
   @Test
   @Order(3)
-  public void ensureSellerNameUniqueness() {
+  public void ensureSellerNameUniqueness() throws InterruptedException{
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(50);
     sellerService.create("myShop"); //first time
-
+    Thread.sleep(50);
     //When
     RuntimeException exception = assertThrows(RuntimeException.class, () ->
         sellerService.create("myShop") //second time
@@ -88,10 +95,12 @@ class SellerServiceTest {
    */
   @Test
   @Order(4)
-  public void addProducts() {
+  public void addProducts() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(50);
     sellerService.create("myShop");
+    Thread.sleep(50);
     List<Product> products = List.of(
         new Product("glasses", 10.5),
         new Product("shirt", 5.0)
@@ -99,7 +108,7 @@ class SellerServiceTest {
 
     //When
     sellerService.addProductsToSeller("myShop", products);
-
+    Thread.sleep(50);
     //Then
     Seller myShop = sellerService.findByName("myShop");
     assertEquals(2, myShop.getProducts().size());
@@ -108,6 +117,45 @@ class SellerServiceTest {
         .collect(Collectors.toList())
         .containsAll(List.of("glasses", "shirt")));
   }
+
+
+  /**
+   * does the function work when we add more than one
+   */
+  @Test
+  @Order(5)
+  public void addProductsTwoTimes() throws InterruptedException {
+    //Given
+    sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(50);
+    sellerService.create("myShop");
+    Thread.sleep(50);
+    List<Product> products = List.of(
+            new Product("glasses", 10.5),
+            new Product("shirt", 5.0)
+    );
+
+    List<Product> products2 = List.of(
+            new Product("phone", 100.5),
+            new Product("computer", 200.0),
+            new Product("book", 40.0)
+    );
+
+
+    //When
+    sellerService.addProductsToSeller("myShop", products);
+    Thread.sleep(50);
+    sellerService.addProductsToSeller("myShop", products2);
+    Thread.sleep(50);
+    //Then
+    Seller myShop = sellerService.findByName("myShop");
+    assertEquals(5, myShop.getProducts().size());
+    assertTrue(myShop.getProducts().stream()
+            .map(Product::getName)
+            .collect(Collectors.toList())
+            .containsAll(List.of("glasses", "shirt", "phone", "computer", "book")));
+  }
+
 
   /**
    * Implement a category filter for seller's products.
@@ -119,14 +167,32 @@ class SellerServiceTest {
    */
   @Test
   @Order(6)
-  public void getProductsByCategory() {
+  public void getProductsByCategory() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(50);
     Seller myShop = sellerService.create("myShop");
 
     // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
     // You need to find a way to query them with their categories.
     // Think about the performance on scale
+
+    // ------------------ implementation
+    List<Product> category1 = List.of(
+            new Product("glasses", 130.5),
+            new Product("shirt", 55.0)
+    );
+
+    List<Product> category2 = List.of(
+            new Product("monitor", 1300.5),
+            new Product("keyboard", 250.0)
+    );
+    Thread.sleep(50);
+    sellerService.addProductsToSeller("myShop", category1, "category1");
+    Thread.sleep(50);
+    sellerService.addProductsToSeller("myShop", category2, "category2");
+    Thread.sleep(50);
+    // ------------------ implementation
 
     //When
     List<Product> productsByCategory1 = sellerService.getProductsByCategory("myShop", "category1");
