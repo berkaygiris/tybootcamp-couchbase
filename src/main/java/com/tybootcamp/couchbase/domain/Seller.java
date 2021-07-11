@@ -20,6 +20,9 @@ public class Seller {
   @Field
   private List<Product> products;
 
+  @Field
+  private List<Category> categories;
+
   public Seller(String name) {
     this.name = name;
   }
@@ -46,5 +49,22 @@ public class Seller {
 
   public void setProducts(List<Product> products) {
     this.products = products;
+  }
+
+  public List<Category> getCategories(){
+    return categories;
+  }
+
+  public void setCategories(List<Category> categories){
+    this.categories = categories;
+  }
+
+  public void setCategory(Category category){
+    if(this.categories != null){
+      categories.add(category);
+    }
+    else{
+      this.categories = List.of(category);
+    }
   }
 }
