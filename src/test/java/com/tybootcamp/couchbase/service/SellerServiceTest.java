@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Order;
@@ -93,8 +95,8 @@ class SellerServiceTest {
     sellerRepository.deleteByName("myShop"); //clean up first
     sellerService.create("myShop");
     List<Product> products = List.of(
-        new Product("glasses", 10.5),
-        new Product("shirt", 5.0)
+        new Product("glasses", 10.5,"category1"),
+        new Product("shirt", 5.0, "category1")
     );
 
     //When
@@ -120,10 +122,19 @@ class SellerServiceTest {
   @Test
   @Order(6)
   public void getProductsByCategory() {
+
+
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
     Seller myShop = sellerService.create("myShop");
 
+    List<Product> products = new ArrayList<Product>();
+    products.add(new Product("glasses", 10.0, "category1"));
+    products.add(new Product("shirt", 65.5,"category1"));
+    products.add(new Product("monitor", 152.0,"category2"));
+    products.add(new Product("keyboard", 54.0, "category2"));
+
+    myShop.setProducts(products);
     // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
     // You need to find a way to query them with their categories.
     // Think about the performance on scale

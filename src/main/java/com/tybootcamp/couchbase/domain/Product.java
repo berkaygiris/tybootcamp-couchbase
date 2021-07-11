@@ -12,9 +12,20 @@ public class Product {
   @Field
   private Double price;
 
-  public Product(String name, Double price) {
+  @Field
+  private String category;
+  public Product(String name, Double price, String category) {
     this.name = name;
+    this.category = category;
     this.price = price;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
   }
 
   public String getName() {

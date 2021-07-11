@@ -3,6 +3,8 @@ package com.tybootcamp.couchbase.service;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -27,17 +29,37 @@ public class SellerService {
   }
 
   public Seller findByName(String name) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+
+    Seller temp = null;
+    List<Seller> sellers = sellerRepository.findAll();
+
+    for (Seller seller: sellers) {
+      if(seller.getName().equalsIgnoreCase(name)){
+        temp = seller;
+      }else{
+        throw new RuntimeException(
+                String.format("Seller not found with name: %s", name));
+      }
+    }
+    return temp;
+
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Seller seller = findByName(sellerName);
+    seller.setProducts(products);
   }
 
   public List<Product> getProductsByCategory(String sellerName, String category) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+      Seller seller = findByName(sellerName);
+      List<Product> products = seller.getProducts();
+      List<Product> categoryProducts = new ArrayList<Product>();
+
+      for (Product product: products){
+        if(product.getCategory().equalsIgnoreCase(category)){
+          categoryProducts.add(product);
+        }
+      }
+      return categoryProducts;
   }
 }
