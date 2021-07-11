@@ -4,6 +4,8 @@ import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,8 +29,8 @@ public class SellerService {
   }
 
   public Seller findByName(String name) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Optional<Seller> optionalSeller = sellerRepository.findByName(name);
+    return optionalSeller.orElseThrow(() -> new RuntimeException("Seller not found"));
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
