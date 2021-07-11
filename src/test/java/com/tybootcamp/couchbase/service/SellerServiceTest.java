@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Order;
@@ -30,6 +32,7 @@ class SellerServiceTest {
   @Order(1)
   public void findById() {
     //Given
+    sellerRepository.deleteByName("myShop");
     Seller createdSeller = sellerService.create("myShop");
 
     //When
@@ -78,7 +81,7 @@ class SellerServiceTest {
     );
 
     //Then
-    assertEquals("There is already a shop named as: myshop", exception.getMessage());
+    assertEquals("There is already a shop named as: myShop", exception.getMessage());
   }
 
   /**
@@ -109,14 +112,6 @@ class SellerServiceTest {
         .containsAll(List.of("glasses", "shirt")));
   }
 
-  /**
-   * Implement a category filter for seller's products.
-   * <p>
-   * In this example we want to query the products by their categories. According to When and Then
-   * statements. The following result is expected.
-   * <p>
-   * category1 -> ["glasses", "shirt"] category2 -> ["keyboard", "monitor"]
-   */
   @Test
   @Order(6)
   public void getProductsByCategory() {
@@ -124,10 +119,20 @@ class SellerServiceTest {
     sellerRepository.deleteByName("myShop"); //clean up first
     Seller myShop = sellerService.create("myShop");
 
-    // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
-    // You need to find a way to query them with their categories.
-    // Think about the performance on scale
-
+    //glasses for category1
+    Product glasses=new Product("glasses",3.3);
+    glasses.setCategories(Arrays.asList("category1"));
+    //shirt for category1
+    Product shirt=new Product("shirt",4.2);
+    shirt.setCategories(Arrays.asList("category1"));
+    //monitor
+    Product monitor=new Product("monitor",5.5);
+    monitor.setCategories(Arrays.asList("category2"));
+    //keyboard
+    Product keyboard=new Product("keyboard",6.6);
+    keyboard.setCategories(Arrays.asList("category2"));
+    //add products to seller
+    sellerService.addProductsToSeller("myShop",Arrays.asList(glasses,shirt,monitor,keyboard));
     //When
     List<Product> productsByCategory1 = sellerService.getProductsByCategory("myShop", "category1");
     List<Product> productsByCategory2 = sellerService.getProductsByCategory("myShop", "category2");
