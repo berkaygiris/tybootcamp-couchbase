@@ -34,8 +34,19 @@ public class SellerService {
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Optional<Seller> optionalSeller = sellerRepository.findByName(sellerName);
+    if (optionalSeller.isEmpty())
+    {
+      Seller newSeller = new Seller(sellerName);
+      newSeller.setProducts(products);
+      sellerRepository.save(newSeller);
+    }
+    else
+    {
+      Seller seller = optionalSeller.orElseThrow(() -> new RuntimeException("Seller not found"));
+      seller.setProducts(products);
+      sellerRepository.save(seller);
+    }
   }
 
   public List<Product> getProductsByCategory(String sellerName, String category) {
