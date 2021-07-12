@@ -3,7 +3,11 @@ package com.tybootcamp.couchbase.service;
 import com.tybootcamp.couchbase.domain.Product;
 import com.tybootcamp.couchbase.domain.Seller;
 import com.tybootcamp.couchbase.repository.SellerRepository;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,17 +31,36 @@ public class SellerService {
   }
 
   public Seller findByName(String name) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Optional<Seller> optionalSeller = sellerRepository.findByName(name);
+    return optionalSeller.orElseThrow(() -> new RuntimeException("Seller not found"));
   }
 
   public void addProductsToSeller(String sellerName, List<Product> products) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Optional<Seller> optionalSeller = sellerRepository.findByName(sellerName);
+    if (optionalSeller.isEmpty())
+    {
+      Seller newSeller = new Seller(sellerName);
+      newSeller.setProducts(products);
+      sellerRepository.save(newSeller);
+    }
+    else
+    {
+      Seller seller = optionalSeller.orElseThrow(() -> new RuntimeException("Seller not found"));
+      seller.setProducts(products);
+      sellerRepository.save(seller);
+    }
   }
 
   public List<Product> getProductsByCategory(String sellerName, String category) {
-    //TODO: Not yet implemented
-    throw new RuntimeException("Implement me");
+    Seller seller = sellerRepository.findByName(sellerName).orElseThrow(() -> new RuntimeException("SELLER NOT FOUND"));
+    List<Product> products = new ArrayList<>();
+    if (!seller.getProducts().isEmpty())
+    {
+      for (Product item : seller.getProducts()) {
+        if (item.getCategoryName().equals(category))
+          products.add(item);
+      }
+    }
+    return products;
   }
 }

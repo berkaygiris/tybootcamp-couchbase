@@ -124,9 +124,14 @@ class SellerServiceTest {
     sellerRepository.deleteByName("myShop"); //clean up first
     Seller myShop = sellerService.create("myShop");
 
-    // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
-    // You need to find a way to query them with their categories.
-    // Think about the performance on scale
+    List<Product> products = List.of(
+            new Product("monitor", 200.0,"category2"),
+            new Product("keyboard", 150.0,"category2"),
+            new Product("glasses", 10.5,"category1"),
+            new Product("shirt", 5.0,"category1")
+    );
+
+    sellerService.addProductsToSeller("myShop", products);
 
     //When
     List<Product> productsByCategory1 = sellerService.getProductsByCategory("myShop", "category1");
