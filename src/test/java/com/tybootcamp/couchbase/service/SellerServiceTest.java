@@ -47,10 +47,12 @@ class SellerServiceTest {
    */
   @Test
   @Order(2)
-  public void findByName() {
+  public void findByName() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //to be make sure of uniqueness
+    Thread.sleep(50);
     Seller myShop = sellerService.create("myShop");
+    Thread.sleep(50);
 
     //When
     Seller foundSeller = sellerService.findByName("myShop");
@@ -67,10 +69,12 @@ class SellerServiceTest {
    */
   @Test
   @Order(3)
-  public void ensureSellerNameUniqueness() {
+  public void ensureSellerNameUniqueness() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(50);
     sellerService.create("myShop"); //first time
+    Thread.sleep(50);
 
     //When
     RuntimeException exception = assertThrows(RuntimeException.class, () ->
@@ -88,10 +92,12 @@ class SellerServiceTest {
    */
   @Test
   @Order(4)
-  public void addProducts() {
+  public void addProducts() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(50);
     sellerService.create("myShop");
+    Thread.sleep(50);
     List<Product> products = List.of(
         new Product("glasses", 10.5),
         new Product("shirt", 5.0)
@@ -100,8 +106,10 @@ class SellerServiceTest {
     //When
     sellerService.addProductsToSeller("myShop", products);
 
+
     //Then
     Seller myShop = sellerService.findByName("myShop");
+    Thread.sleep(50);
     assertEquals(2, myShop.getProducts().size());
     assertTrue(myShop.getProducts().stream()
         .map(Product::getName)
@@ -119,14 +127,21 @@ class SellerServiceTest {
    */
   @Test
   @Order(6)
-  public void getProductsByCategory() {
+  public void getProductsByCategory() throws InterruptedException {
     //Given
     sellerRepository.deleteByName("myShop"); //clean up first
+    Thread.sleep(50);
     Seller myShop = sellerService.create("myShop");
+    Thread.sleep(50);
 
-    // TODO: Add products ["glasses", "shirt", "monitor", "keyboard"] to myShop here
-    // You need to find a way to query them with their categories.
-    // Think about the performance on scale
+    List<Product> products = List.of(
+            new Product("glasses","category1"),
+            new Product("shirt","category1"),
+            new Product("monitor","category2"),
+            new Product("keyboard","category2"));
+
+    myShop.setProducts(products);
+    sellerRepository.save(myShop);
 
     //When
     List<Product> productsByCategory1 = sellerService.getProductsByCategory("myShop", "category1");
