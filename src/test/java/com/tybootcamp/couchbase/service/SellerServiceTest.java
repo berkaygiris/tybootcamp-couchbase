@@ -125,10 +125,10 @@ class SellerServiceTest {
     Seller myShop = sellerService.create("myShop");
 
     List<Product> products = List.of(
-            new Product("glasses", 10.5,"category1"),
-            new Product("shirt", 5.0,"category1"),
             new Product("monitor", 200.0,"category2"),
-            new Product("keyboard", 150.0,"category2")
+            new Product("keyboard", 150.0,"category2"),
+            new Product("glasses", 10.5,"category1"),
+            new Product("shirt", 5.0,"category1")
     );
 
     sellerService.addProductsToSeller("myShop", products);

@@ -52,7 +52,7 @@ public class SellerService {
   }
 
   public List<Product> getProductsByCategory(String sellerName, String category) {
-    Seller seller = sellerRepository.findByName(sellerName).orElseThrow(() -> new RuntimeException("Seller not found"));
+    Seller seller = sellerRepository.findByName(sellerName).orElseThrow(() -> new RuntimeException("SELLER NOT FOUND"));
     List<Product> products = new ArrayList<>();
     if (!seller.getProducts().isEmpty())
     {
