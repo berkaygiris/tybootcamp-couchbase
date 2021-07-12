@@ -12,9 +12,35 @@ public class Product {
   @Field
   private Double price;
 
+  @Field
+  private String category;
+
+  public Product() {
+  }
+
+  public Product(String name, Double price, String category) {
+    this.name = name;
+    this.price = price;
+    this.category = category;
+  }
+
+  public Product(String name, String category) {
+    this.name = name;
+    this.category = category;
+  }
+
   public Product(String name, Double price) {
     this.name = name;
     this.price = price;
+    this.category="Unknown"; //To avoid error on test section -new Product("glasses", 10.5)-
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
   }
 
   public String getName() {

@@ -28,6 +28,7 @@ public class Seller {
     return id;
   }
 
+
   public void setId(String id) {
     this.id = id;
   }
@@ -41,10 +42,13 @@ public class Seller {
   }
 
   public List<Product> getProducts() {
-    return products;
+    return this.products;
   }
 
   public void setProducts(List<Product> products) {
     this.products = products;
+  }
+  public void addProducts(List<Product> productList) {
+    this.products.addAll(productList);
   }
 }
